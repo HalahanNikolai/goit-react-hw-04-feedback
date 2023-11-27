@@ -1,30 +1,54 @@
-import React, { Component } from 'react';
+// import React, { Component } from 'react';
+import { useState } from 'react';
 import { FeedbackOptions } from './FeedbackOptions/FeedbackOptions';
 import { GlobalStyle } from './GlobalStyle';
 import { Section } from './Section/Section';
 import { Statistics } from './Statistics/Statistics';
 
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
+export function App() {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+// export class App extends Component {
+//   state = {
+//     good: 0,
+//     neutral: 0,
+//     bad: 0,
+//   };
+
+    const realFeedback = e => {
+    switch (e) {
+      case 'good':
+        setGood(prevState => prevState + 1);
+        break;
+      case 'bad':
+        setBad(prevState => prevState + 1);
+        break;
+      case 'neutral':
+        setNeutral(prevState => prevState + 1);
+        break;
+      default:
+        return;
+    }
   };
 
-  realFeedback = evnt => {
-    this.setState({ [evnt]: this.state[evnt] + 1 });
-  };
-  countFeedbackStat = ({ good,  bad }) => good +  bad;
-  countTotalFeedback = ({ good, neutral, bad }) => good + neutral + bad;
+  // realFeedback = evnt => {
+  //   this.setState({ [evnt]: this.state[evnt] + 1 });
+  // };
 
-  countFeedbackPos = ({good}) => {
-    const temp = Math.round((good * 100) / this.countFeedbackStat(this.state))
+  const countFeedbackStat = () => good + bad;
+  
+  const countTotalFeedback = () => good + neutral + bad;
+  // countTotalFeedback = ({ good, neutral, bad }) => good + neutral + bad;
+
+ const countFeedbackPos = () => {
+    const temp = Math.round((good * 100) / countFeedbackStat())
     return temp ? temp : 0;
   };
   
+  // render() {
+  //   const { good, neutral, bad } = this.state;
 
-  render() {
-    const { good, neutral, bad } = this.state;
     return (
 <div
       style={{
@@ -44,10 +68,10 @@ export class App extends Component {
       >
               <Section title="Please leave feedback">
           <FeedbackOptions
-            // options={options}
-            // onLeaveFeedback={this.hendleClick}
-             options={Object.keys(this.state)}
-            onLeaveFeedback={this.realFeedback}
+             options={Object.keys({ good, neutral, bad})}
+            //  options={Object.keys(this.state)}
+            onLeaveFeedback={realFeedback}
+            // onLeaveFeedback={this.realFeedback}
           />
         </Section>  
     <Section title="Statistics">
@@ -55,10 +79,9 @@ export class App extends Component {
             good={good}
             neutral={neutral}
             bad={bad}
-            total={this.countTotalFeedback(this.state)}
-            positivePercentage={this.countFeedbackPos(
-              this.state
-            )}
+            total={countTotalFeedback()}
+            // total={this.countTotalFeedback(this.state)}
+            positivePercentage={countFeedbackPos()}
           >
             
           </Statistics>
@@ -71,12 +94,3 @@ export class App extends Component {
   }
 
 
-
-
-
-
-
-
-
-
-}
